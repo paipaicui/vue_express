@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 export default {
   name: 'HelloWorld',
   data() {
@@ -69,10 +69,9 @@ export default {
     // axios.get('/admin/users', { daya: '112' }).then(function (res) {
     //   console.log(res);
     // });
-
-    axios.get('/admin/getList').then(function (res) {
-      console.log(res);
-    });
+    // axios.get('/admin/users').then(function (res) {
+    //   console.log(res);
+    // });
   },
 };
 </script>
