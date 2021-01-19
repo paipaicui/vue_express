@@ -2,7 +2,7 @@
 
   <div id="app">
     <div>
-      <router-link to="link1">path1</router-link>
+      <router-link to="/link1">path1</router-link>
       <router-link to="/link2">path2</router-link>
       <router-link to="/index">index</router-link>
       <router-link to="/login">login</router-link>

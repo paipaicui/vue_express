@@ -4,15 +4,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.resetRouter = resetRouter;
-exports["default"] = void 0;
+exports["default"] = exports.asyncRoutes = void 0;
 
 var _vue = _interopRequireDefault(require("vue"));
 
 var _vueRouter = _interopRequireDefault(require("vue-router"));
-
-var _axios = _interopRequireDefault(require("axios"));
-
-var _bodyParser = require("body-parser");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -46,23 +42,39 @@ var commonRoutes = [{
     return Promise.resolve().then(function () {
       return _interopRequireWildcard(require('../view/link1.vue'));
     });
-  },
-  children: [{
-    path: '/link1/page3',
-    name: 'page33',
+  }
+}, {
+  path: '/',
+  redirect: '/login'
+}]; // 本地所有的页面 需要配合后台返回的数据生成页面
+
+var asyncRoutes = {
+  home: {
+    path: 'link2',
+    name: 'link2',
     meta: {
-      title: '登录'
+      title: '主页'
+    },
+    component: function component() {
+      return Promise.resolve().then(function () {
+        return _interopRequireWildcard(require('../view/link2.vue'));
+      });
+    }
+  },
+  t1: {
+    path: 'link3',
+    name: 'link3',
+    meta: {
+      title: '表格'
     },
     component: function component() {
       return Promise.resolve().then(function () {
         return _interopRequireWildcard(require('../view/page3.vue'));
       });
     }
-  }]
-}, {
-  path: '/',
-  redirect: '/login'
-}]; // 本地所有的页面 需要配合后台返回的数据生成页面
+  }
+};
+exports.asyncRoutes = asyncRoutes;
 
 var createRouter = function createRouter() {
   return new _vueRouter["default"]({
@@ -79,48 +91,55 @@ function resetRouter() {
 
 function createRoutes(data) {
   var result = [];
+  var children = [];
+  result.push({
+    path: '/',
+    component: function component() {
+      return Promise.resolve().then(function () {
+        return _interopRequireWildcard(require('../view/page3.vue'));
+      });
+    },
+    children: children
+  });
   data.forEach(function (item) {
-    result.push({
-      path: item.path,
-      // 点击侧边栏跳到一个单独的路由页面，需要定义，层级和其他顶级路由一样
-      meta: {
-        title: item.title
-      },
-      component: function component() {
-        return Promise.resolve().then(function () {
-          return _interopRequireWildcard(require("".concat('../view/' + item.components + '.vue')));
-        });
-      } //children: createRoutes(item.children)
+    console.log(item);
+    generateRoutes(children, item);
+  }); // 最后添加404页面 否则会在登陆成功后跳到404页面
 
-    });
+  result.push({
+    path: '*',
+    redirect: '/404'
   });
   return result;
 }
 
-if (sessionStorage.getItem('router')) {
-  router.addRoutes(JSON.parse(sessionStorage.getItem('router')));
-} else {
-  router.beforeEach(function _callee(to, from, next) {
-    return regeneratorRuntime.async(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            _axios["default"].get('/admin/users').then(function (res) {
-              var routes = createRoutes(res.data);
-              sessionStorage.setItem('router', JSON.stringify(routes));
-              router.addRoutes(routes);
-            });
-
-            next();
-
-          case 2:
-          case "end":
-            return _context.stop();
-        }
-      }
+function generateRoutes(children, item) {
+  if (item.name) {
+    if (asyncRoutes[item.name]) children.push(asyncRoutes[item.name]);
+  } else if (item.children) {
+    item.children.forEach(function (e) {
+      generateRoutes(children, e);
     });
-  });
+  }
 }
 
+router.beforeEach(function _callee(to, from, next) {
+  var routes;
+  return regeneratorRuntime.async(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          console.log(to, from);
+          routes = createRoutes(); // 动态添加路由
+
+          router.addRoutes(routes);
+
+        case 3:
+        case "end":
+          return _context.stop();
+      }
+    }
+  });
+});
 var _default = router;
 exports["default"] = _default;

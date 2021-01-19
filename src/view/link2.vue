@@ -1,6 +1,7 @@
 <template>
   <div>
     this is page2
+    <router-view></router-view>
   </div>
 </template>
 
