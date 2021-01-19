@@ -70,14 +70,16 @@ function createRoutes(data) {
   return result;
 }
 
-if (sessionStorage.getItem('router')) {
+if (localStorage.getItem('router')) {
 
-  router.addRoutes(JSON.parse(sessionStorage.getItem('router')));
+  const s = JSON.parse(localStorage.getItem('router'));
+  router.addRoutes(createRoutes(s));
+
 } else {
   router.beforeEach(async (to, from, next) => {
     $.get('/admin/users').then(res => {
       const routes = createRoutes(res.data);
-      sessionStorage.setItem('router', JSON.stringify(routes));
+      localStorage.setItem('router', JSON.stringify(res.data));
       router.addRoutes(routes);
 
     })

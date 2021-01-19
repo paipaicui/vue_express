@@ -97,8 +97,9 @@ function createRoutes(data) {
   return result;
 }
 
-if (sessionStorage.getItem('router')) {
-  router.addRoutes(JSON.parse(sessionStorage.getItem('router')));
+if (localStorage.getItem('router')) {
+  var s = JSON.parse(localStorage.getItem('router'));
+  router.addRoutes(createRoutes(s));
 } else {
   router.beforeEach(function _callee(to, from, next) {
     return regeneratorRuntime.async(function _callee$(_context) {
@@ -107,7 +108,7 @@ if (sessionStorage.getItem('router')) {
           case 0:
             _axios["default"].get('/admin/users').then(function (res) {
               var routes = createRoutes(res.data);
-              sessionStorage.setItem('router', JSON.stringify(routes));
+              localStorage.setItem('router', JSON.stringify(res.data));
               router.addRoutes(routes);
             });
 
