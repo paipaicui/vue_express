@@ -4,10 +4,12 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import $ from 'axios'
-//import './router/route.js'
+import Enum from 'vue-enum'
+import enumInfo  from './enum.js'
 
 
 Vue.config.productionTip = false
+Vue.use(Enum,{enumInfo})
 
 /* eslint-disable no-new */
 new Vue({
